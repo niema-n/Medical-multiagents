@@ -1,0 +1,2 @@
+invalid type: string "# Symptômes respiratoires\n\nLes symptômes respiratoires incluent la toux, la gêne respiratoire,\nl'essoufflement, la fièvre et parfois une fatigue générale.\n\nSignes de gravité à surveiller :\n\n- essoufflement important\n- saturation basse\n- douleur thoracique associée\n- aggravation rapide\n- confusion ou malaise\n\nNOT NULL, -- unique per database
+    topic TEX
