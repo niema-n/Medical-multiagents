@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import os
+
 from dotenv import load_dotenv
+from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, StateGraph
 
 from backend.app.nodes.diagnostic_agent import diagnostic_agent
@@ -11,6 +14,10 @@ from backend.app.state import MedicalState
 
 
 load_dotenv()
+
+
+def _running_under_langgraph_api() -> bool:
+    return bool(os.getenv("LANGSMITH_LANGGRAPH_API_VARIANT"))
 
 
 def build_graph():
@@ -42,7 +49,10 @@ def build_graph():
     builder.add_edge("physician_review", "supervisor")
     builder.add_edge("report_agent", "supervisor")
 
-    return builder.compile()
+    if _running_under_langgraph_api():
+        return builder.compile()
+
+    return builder.compile(checkpointer=MemorySaver())
 
 
 # Exported graph used by FastAPI, LangGraph CLI and LangGraph Studio.

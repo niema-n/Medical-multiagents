@@ -1,5 +1,6 @@
 import os
 import re
+import logging
 from dataclasses import dataclass
 from functools import lru_cache
 
@@ -30,7 +31,10 @@ from backend.mcp_server.server import search_symptoms
 from backend.app.tools.patient_tools import ask_patient
 
 
+logger = logging.getLogger("medical_multiagents.diagnostic_agent")
+
 MAX_QUESTIONS = 5
+PATIENT_CASE_FALLBACK = "Cas non renseigne."
 
 SYSTEM_PROMPT = """Tu es un assistant medical conversationnel prudent.
 
@@ -1283,7 +1287,10 @@ def _collect_patient_response(
 ) -> str:
     if os.getenv("MEDICAL_DEMO_AUTORUN", "false").lower() == "true":
         response = _dynamic_simulated_response(patient_case, question, question_count)
-    else:
+        return mask_sensitive_data(validate_patient_input(response))
+
+    validation_error: str | None = None
+    while True:
         payload = {
             "type": "patient_question",
             "question_index": question_count + 1,
@@ -1294,9 +1301,34 @@ def _collect_patient_response(
         }
         if interrupt_context:
             payload.update(interrupt_context)
-        response = interrupt(payload)
+        if validation_error:
+            payload["validation_error"] = validation_error
+            payload["message"] = validation_error
 
-    return mask_sensitive_data(validate_patient_input(str(response)))
+        response = interrupt(payload)
+        response_text = _extract_patient_response_text(response)
+        if response_text:
+            return mask_sensitive_data(validate_patient_input(response_text))
+
+        validation_error = "La reponse patient ne peut pas etre vide. Merci de renseigner une reponse avant de continuer."
+        logger.warning(
+            "empty_patient_response_reprompt",
+            extra={
+                "question_index": question_count + 1,
+                "patient_case_preview": mask_sensitive_data(patient_case[:180]),
+            },
+        )
+
+
+def _extract_patient_response_text(response: object) -> str:
+    if isinstance(response, dict):
+        for key in ("patient_answer", "answer", "response", "message", "text"):
+            value = response.get(key)
+            if value is not None and str(value).strip():
+                return str(value).strip()
+        return ""
+
+    return str(response or "").strip()
 
 
 @lru_cache(maxsize=128)
@@ -1425,8 +1457,43 @@ def diagnostic_agent(state: MedicalState) -> MedicalState:
         return _diagnostic_agent_impl(state)
 
 
+def _coerce_patient_case(state: MedicalState) -> str:
+    """
+    Read patient_case from LangGraph state without overwriting a provided value.
+
+    LangGraph Studio and FastAPI both send a plain state dict. This helper keeps
+    the direct patient_case field as the source of truth, and only falls back
+    when it is absent or blank.
+    """
+    raw_patient_case = state.get("patient_case")
+    if raw_patient_case is None:
+        logger.warning(
+            "patient_case_missing_using_fallback",
+            extra={"state_keys": sorted(str(key) for key in state.keys())},
+        )
+        return PATIENT_CASE_FALLBACK
+
+    patient_case = str(raw_patient_case).strip()
+    if not patient_case:
+        logger.warning(
+            "patient_case_blank_using_fallback",
+            extra={"state_keys": sorted(str(key) for key in state.keys())},
+        )
+        return PATIENT_CASE_FALLBACK
+
+    logger.debug(
+        "patient_case_received",
+        extra={
+            "patient_case_preview": mask_sensitive_data(patient_case[:180]),
+            "patient_id": state.get("patient_id"),
+            "patient_name": state.get("patient_name"),
+        },
+    )
+    return patient_case
+
+
 def _diagnostic_agent_impl(state: MedicalState) -> MedicalState:
-    patient_case = state.get("patient_case", "Cas non renseigne.")
+    patient_case = _coerce_patient_case(state)
     responses = list(state.get("patient_responses", []))
     asked_questions = list(state.get("asked_questions", []))
     question_count = int(state.get("question_count", len(asked_questions)) or 0)
@@ -1463,6 +1530,7 @@ def _diagnostic_agent_impl(state: MedicalState) -> MedicalState:
                     name="diagnostic_agent",
                 )
             ],
+            "patient_case": patient_case,
             "patient_responses": responses,
             "asked_questions": asked_questions,
             "contextual_symptoms": contextual_symptoms,
@@ -1512,6 +1580,7 @@ def _diagnostic_agent_impl(state: MedicalState) -> MedicalState:
                 name="diagnostic_agent",
             )
         ],
+        "patient_case": patient_case,
         "patient_responses": responses,
         "asked_questions": asked_questions,
         "contextual_symptoms": contextual_symptoms,

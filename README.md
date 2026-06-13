@@ -1,200 +1,295 @@
-# 🩺 MediGraph AI Clinic
+# Medical Multi-Agent System with LangGraph
 
-> **Medical Multi-Agent System with LangGraph, FastAPI, MCP and RAG**  
-> Academic PFA project for preliminary clinical orientation, Human-in-the-Loop medical workflows, contextual questioning, medical retrieval and PDF report generation.
+> Professional project report and technical documentation for a medical multi-agent consultation system using LangGraph, FastAPI, Streamlit, MCP, RAG, and Human-in-the-Loop validation.
 
-![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![LangGraph](https://img.shields.io/badge/LangGraph-Multi--Agent-1C3C3C?style=for-the-badge)
-![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
-![ChromaDB](https://img.shields.io/badge/ChromaDB-RAG-5B5FC7?style=for-the-badge)
-![Academic](https://img.shields.io/badge/Status-Academic%20PFA-blue?style=for-the-badge)
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?style=flat-square&logo=fastapi&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)
+![LangGraph](https://img.shields.io/badge/LangGraph-Multi--Agent_Workflow-1C3C3C?style=flat-square)
+![LangChain](https://img.shields.io/badge/LangChain-Orchestration-2C8EBB?style=flat-square)
+![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector_Database-5B5FC7?style=flat-square)
+![OpenAI](https://img.shields.io/badge/OpenAI-LLM_&_Embeddings-111111?style=flat-square&logo=openai&logoColor=white)
 
----
+## Table of Contents
 
-## ⚠️ Academic Medical Disclaimer
+- [1. Executive Summary](#1-executive-summary)
+- [2. Medical Disclaimer](#2-medical-disclaimer)
+- [3. Project Context](#3-project-context)
+- [4. Problem Statement](#4-problem-statement)
+- [5. Project Objectives](#5-project-objectives)
+- [6. Functional Scope](#6-functional-scope)
+- [7. Global Architecture](#7-global-architecture)
+- [8. Multi-Agent Workflow](#8-multi-agent-workflow)
+- [9. Human-in-the-Loop Mechanism](#9-human-in-the-loop-mechanism)
+- [10. MCP Medical Layer](#10-mcp-medical-layer)
+- [11. RAG Medical Layer](#11-rag-medical-layer)
+- [12. Technology Stack](#12-technology-stack)
+- [13. Project Structure](#13-project-structure)
+- [14. Installation](#14-installation)
+- [15. Configuration](#15-configuration)
+- [16. Running the Application](#16-running-the-application)
+- [17. User Guide](#17-user-guide)
+- [18. API Documentation](#18-api-documentation)
+- [19. Testing and Validation](#19-testing-and-validation)
+- [20. Results](#20-results)
+- [21. Screenshots](#21-screenshots)
+- [22. Limitations](#22-limitations)
+- [23. Future Improvements](#23-future-improvements)
+- [24. Authors](#24-authors)
 
-**MediGraph AI Clinic is not a real medical diagnostic system.**  
-This project provides an **orientation clinique préliminaire** for educational and academic purposes only. It must not be used as a substitute for a licensed physician, emergency care, medical diagnosis, or treatment decision.
+## 1. Executive Summary
 
-The system is designed around **Human-in-the-Loop safety**: patient answers and physician review steps are explicitly included before final report generation.
+The **Medical Multi-Agent System with LangGraph** is an academic software engineering project designed to demonstrate how multi-agent artificial intelligence can support a structured medical consultation workflow.
 
----
+The system allows a user to start an interactive consultation from a Streamlit dashboard. The request is sent to a FastAPI backend, which triggers a LangGraph workflow composed of multiple specialized agents. The workflow collects patient information, analyzes symptoms, retrieves medical context, requests human validation, and generates a final preliminary clinical report that can be exported as a PDF.
 
-## Project Overview
+The project combines four important AI engineering concepts:
 
-**MediGraph AI Clinic** is an academic AI healthcare prototype that implements a medical multi-agent conversational workflow using **LangGraph**. It simulates a clinical consultation pipeline where specialized agents collaborate to collect patient information, ask contextual medical questions, enrich reasoning with MCP and RAG, estimate severity, request human validation, and generate a structured medical report.
+- **Multi-agent orchestration** with LangGraph.
+- **Human-in-the-Loop safety** using workflow interruption and resumption.
+- **MCP-based medical tooling** for structured support functions.
+- **Retrieval-Augmented Generation** using ChromaDB and local medical documents.
 
-The project combines:
+The purpose of the system is not to replace a physician, but to provide a controlled academic prototype for preliminary clinical orientation and medical AI workflow experimentation.
 
-- **LangGraph** for stateful multi-agent orchestration
-- **FastAPI** for the medical workflow API
-- **Streamlit** for a modern clinical dashboard
-- **MCP** for medical reasoning tools
-- **RAG with ChromaDB** for medical document retrieval
-- **PDF export** for medical report generation
+## 2. Medical Disclaimer
 
----
+This project is intended for academic and educational use only.
 
-## Main Features
+It does not provide:
 
-- 🧠 **LangGraph multi-agent workflow**
-- 🩺 **Preliminary clinical orientation**
-- 🔁 **Human-in-the-Loop workflow with interrupt/resume**
-- ❓ **Dynamic contextual medical questions**
-- 📊 **Clinical scoring and severity estimation**
-- 🔎 **Contextual symptom extraction**
-- 🧩 **MCP medical reasoning**
-- 📚 **RAG medical retrieval with ChromaDB**
-- 🧾 **PDF medical report export**
-- 🧑‍⚕️ **Physician review step before finalization**
-- 🕒 **Clinical timeline and consultation tracking**
-- 🧠 **Medical memory/context tracking**
-- 💻 **FastAPI backend**
-- 📈 **Modern Streamlit medical dashboard**
-- 🗂️ **Support for multiple clinical categories**
+- A definitive medical diagnosis.
+- A medical prescription.
+- Emergency triage.
+- A replacement for physician consultation.
+- Certified clinical decision support.
 
----
+All generated outputs must be interpreted as **preliminary clinical orientation**. In real life, any concerning symptom, emergency sign, or worsening condition must be evaluated by a qualified healthcare professional.
 
-## System Architecture
+## 3. Project Context
+
+Healthcare workflows require careful collection of patient information, clinical reasoning, documentation, and human validation. Modern AI systems can assist with parts of this process, but medical applications require higher safety standards than ordinary conversational tools.
+
+In particular, a medical AI prototype should:
+
+- Ask relevant follow-up questions.
+- Keep track of symptoms and answers.
+- Identify possible red flags.
+- Use external knowledge sources when possible.
+- Avoid presenting uncertain reasoning as a final diagnosis.
+- Include physician validation before producing a final report.
+
+This project was developed in that context as an academic prototype combining AI agents, backend APIs, a dashboard interface, and document retrieval.
+
+## 4. Problem Statement
+
+Traditional chatbot-based medical assistants often suffer from three limitations:
+
+1. They lack a clear workflow structure.
+2. They may generate answers without explicit human validation.
+3. They often rely only on model knowledge instead of project-specific medical documentation.
+
+The problem addressed by this project is the design of a safer and more structured medical consultation system, where each step is controlled by a graph workflow and where human input is required before continuing sensitive stages.
+
+The main research and engineering question is:
+
+> How can a multi-agent LangGraph workflow be used to coordinate an interactive medical consultation with RAG, MCP tools, Human-in-the-Loop validation, and final report generation?
+
+## 5. Project Objectives
+
+The project has the following objectives:
+
+- Build an interactive medical consultation interface.
+- Implement a FastAPI backend for workflow execution.
+- Design a LangGraph multi-agent architecture.
+- Create a Diagnostic Agent for symptom analysis and clinical orientation.
+- Integrate Human-in-the-Loop interruptions for patient and physician input.
+- Use MCP as a medical tool layer.
+- Use RAG to retrieve medical context from local documents.
+- Generate a structured final clinical report.
+- Export the report as a PDF file.
+- Provide a professional and reproducible software architecture.
+
+## 6. Functional Scope
+
+The system includes the following functional modules:
+
+| Feature | Description |
+|---|---|
+| Interactive consultation | The patient enters symptoms, medical history, and an initial complaint through Streamlit. |
+| Diagnostic Agent | Extracts symptoms, identifies clinical category, asks contextual questions, and builds preliminary reasoning. |
+| Human-in-the-Loop | Pauses the workflow to wait for patient answers and physician review. |
+| MCP medical tooling | Provides structured support functions for medical reasoning and patient/care tools. |
+| RAG medical retrieval | Retrieves relevant context from indexed local medical documents. |
+| Physician Review | Adds a validation step before the final report is generated. |
+| Report Agent | Produces a structured clinical report from the consultation state. |
+| PDF export | Converts the final report into a downloadable PDF document. |
+| Streamlit dashboard | Provides the user interface for the academic demonstration. |
+| FastAPI backend | Exposes API endpoints for sessions, consultations, resume, reports, and PDF export. |
+| LangGraph workflow | Coordinates all agents and maintains state across the consultation. |
+
+## 7. Global Architecture
+
+The system follows a layered architecture:
+
+```text
+Patient
+  -> Streamlit Dashboard
+  -> FastAPI Backend
+  -> LangGraph Workflow
+  -> Diagnostic Agent
+  -> MCP Medical Tools
+  -> RAG Medical Retriever
+  -> Physician Review
+  -> Report Agent
+  -> PDF Export
+```
+
+Architecture diagram:
 
 ```mermaid
 flowchart TD
-    Patient[Patient / User] --> Frontend[Streamlit Dashboard]
-    Frontend --> API[FastAPI Backend]
-    API --> Graph[LangGraph Medical Workflow]
+    Patient[Patient / User] --> Streamlit[Streamlit Dashboard]
+    Streamlit --> FastAPI[FastAPI Backend]
+    FastAPI --> LangGraph[LangGraph Workflow]
 
-    Graph --> Supervisor[Supervisor Agent]
+    LangGraph --> Supervisor[Supervisor Node]
     Supervisor --> Diagnostic[Diagnostic Agent]
-    Diagnostic --> HITL[HITL Consultation]
-    HITL --> MCP[MCP Medical Reasoning]
-    HITL --> RAG[RAG Medical Retrieval]
+    Diagnostic --> MCP[MCP Medical Layer]
+    Diagnostic --> RAG[RAG Medical Layer]
+
     RAG --> Chroma[(ChromaDB)]
     RAG --> Docs[Medical Markdown Documents]
+
     MCP --> Review[Physician Review]
     RAG --> Review
     Review --> Report[Report Agent]
-    Report --> PDF[PDF Medical Report]
-    Report --> Frontend
+    Report --> PDF[PDF Export]
+    Report --> Streamlit
 ```
 
-### Main Pipeline
+### Architectural Responsibilities
+
+| Layer | Responsibility |
+|---|---|
+| Streamlit | User interface, consultation form, HITL interaction, final report display. |
+| FastAPI | API gateway, request validation, graph execution, report export. |
+| LangGraph | Stateful orchestration of medical agents and workflow transitions. |
+| Agents | Specialized reasoning nodes for diagnosis, review, and report generation. |
+| MCP | Tool-based medical support layer. |
+| RAG | Retrieval of relevant medical knowledge from the local document base. |
+| ChromaDB | Vector database used to persist and retrieve embedded medical documents. |
+
+## 8. Multi-Agent Workflow
+
+The workflow is implemented in `backend/app/graph.py` using LangGraph.
+
+The main graph sequence is:
 
 ```text
-Supervisor
-   ↓
-Diagnostic Agent
-   ↓
-HITL Consultation
-   ↓
-MCP / RAG Enrichment
-   ↓
-Physician Review
-   ↓
-Report Agent
-   ↓
-PDF Export + Dashboard Summary
+supervisor -> diagnostic_agent -> physician_review -> report_agent
 ```
 
----
+Every node returns control to the Supervisor, which decides the next step based on the workflow state.
 
-## Multi-Agent Workflow
+### Agent Roles
 
-The project uses a stateful **LangGraph** workflow where each node is responsible for a specific clinical task.
-
-| Agent / Node | Responsibility |
+| Agent / Node | Role |
 |---|---|
-| **Supervisor** | Controls the workflow, routes execution, and decides the next medical step. |
-| **Diagnostic Agent** | Extracts symptoms, identifies medical category, generates contextual questions, and builds a diagnostic summary. |
-| **HITL Consultation** | Pauses the graph to collect human input from patient or physician. |
-| **MCP/RAG Layer** | Enriches clinical reasoning using tool-based medical logic and document retrieval. |
-| **Physician Review** | Simulates or requests clinical validation before report generation. |
-| **Report Agent** | Generates a structured final medical report. |
+| `supervisor` | Central router. It reads the current state and decides which agent should run next. |
+| `diagnostic_agent` | Performs symptom extraction, clinical category detection, contextual questioning, RAG enrichment, and preliminary reasoning. |
+| `physician_review` | Represents the Human-in-the-Loop validation step before finalization. |
+| `report_agent` | Produces the final structured medical report. |
 
-The workflow state tracks:
+### Workflow State
 
-- Patient case
-- Symptoms
-- Medical history
-- Asked questions
-- Patient responses
-- Clinical category
-- Clinical score
-- Severity level
-- MCP context
-- RAG context
-- Physician treatment/review
-- Final report
+The workflow state stores the full consultation context, including:
 
----
+- Patient case.
+- Patient identifier and session identifier.
+- Symptoms and medical history.
+- Asked questions and patient responses.
+- Clinical category.
+- Clinical score.
+- Severity level.
+- Diagnostic summary.
+- MCP context.
+- RAG context.
+- Physician notes and decision.
+- Final report.
+- PDF path.
+- Consultation status.
 
-## HITL Workflow
+## 9. Human-in-the-Loop Mechanism
 
-Human-in-the-Loop is a key safety mechanism in MediGraph AI Clinic.
+Human-in-the-Loop is one of the most important safety mechanisms in the project.
 
-LangGraph can pause execution using `interrupt()` and resume using `Command(resume=...)`. This allows the system to wait for:
+LangGraph allows the workflow to pause execution using `interrupt()`. The backend can later resume the same workflow thread using `Command(resume=...)`.
 
-- Patient answers to contextual questions
-- Additional symptom details
-- Physician review
-- Treatment validation
-- Final approval before report generation
+This mechanism is used for:
 
-```mermaid
-sequenceDiagram
-    participant U as Patient / Physician
-    participant UI as Streamlit Dashboard
-    participant API as FastAPI
-    participant LG as LangGraph
+- Asking the patient contextual medical questions.
+- Waiting for additional symptom clarification.
+- Requesting physician review.
+- Preventing automatic finalization without human validation.
 
-    U->>UI: Submit initial complaint
-    UI->>API: POST /consultation/start
-    API->>LG: graph.invoke(initial_state)
-    LG-->>API: interrupt(patient_question)
-    API-->>UI: waiting_patient_response
-    U->>UI: Answer question
-    UI->>API: POST /consultation/resume
-    API->>LG: Command(resume=answer)
-    LG-->>API: interrupt(physician_review)
-    U->>UI: Physician validation
-    UI->>API: POST /consultation/resume
-    API->>LG: Command(resume=review)
-    LG-->>API: final_report
+Conceptual flow:
+
+```text
+graph.invoke(initial_state)
+  -> interrupt(patient_question)
+  -> user provides answer
+  -> Command(resume=patient_answer)
+  -> interrupt(physician_review)
+  -> physician validates or modifies orientation
+  -> Command(resume=physician_decision)
+  -> report_agent generates final report
 ```
 
----
+This design makes the workflow more transparent and safer than a fully autonomous chatbot.
 
-## MCP and RAG
+## 10. MCP Medical Layer
 
-### MCP Medical Reasoning
+MCP is used as a structured tool layer for medical helper functions.
 
-The project includes an MCP-oriented reasoning layer for structured medical assistance. MCP tools can help the workflow evaluate:
+In this project, the MCP layer supports:
 
-- Red flags
-- Urgency indicators
-- Care orientation
-- Symptom consistency
-- Medical reasoning context
+- Patient-related tools.
+- Care orientation helpers.
+- Medical context enrichment.
+- Separation between tool logic and graph orchestration.
 
 Relevant files:
 
-- `backend/app/tools/mcp_client.py`
 - `backend/mcp_server/server.py`
+- `backend/app/tools/mcp_client.py`
 - `backend/app/tools/care_tools.py`
 - `backend/app/tools/patient_tools.py`
 
-### RAG Medical Retrieval
+The MCP layer improves modularity because new medical tools can be added without rewriting the full LangGraph workflow.
 
-RAG retrieves contextual medical knowledge from local Markdown documents indexed into **ChromaDB** using OpenAI embeddings.
+## 11. RAG Medical Layer
 
-```mermaid
-flowchart LR
-    Query[Clinical Case / Symptoms] --> Retriever[RAG Retriever]
-    Retriever --> Embeddings[OpenAI Embeddings]
-    Embeddings --> Chroma[(ChromaDB Vector Store)]
-    Chroma --> Context[Relevant Medical Context]
-    Context --> Agent[Diagnostic / Report Agents]
+The Retrieval-Augmented Generation module retrieves medical information from local Markdown documents stored in `data/medical_docs/`.
+
+The RAG pipeline works as follows:
+
+```text
+Medical documents
+  -> document indexing
+  -> embeddings
+  -> ChromaDB vector store
+  -> similarity retrieval
+  -> relevant medical context
+  -> agent reasoning
 ```
+
+RAG is useful because it:
+
+- Grounds the agents in a local medical knowledge base.
+- Reduces dependence on the LLM alone.
+- Retrieves information based on symptoms and clinical category.
+- Supports final report generation with contextual information.
 
 Relevant files:
 
@@ -203,222 +298,116 @@ Relevant files:
 - `data/medical_docs/`
 - `data/chroma_db/`
 
----
+Current medical document categories include:
 
-## Medical Categories Supported
+- Cardiac.
+- Respiratory.
+- Digestive.
+- Infectious / febrile.
+- Neurological.
+- ENT / ORL.
+- Urinary.
+- Dermatological.
+- Musculoskeletal.
+- General medicine.
 
-MediGraph AI Clinic supports preliminary orientation across the following categories:
+## 12. Technology Stack
 
-| Category | Examples |
+| Technology | Role in the Project |
 |---|---|
-| **Cardiac** | Chest pain, palpitations, dyspnea with cardiac suspicion |
-| **Respiratory** | Cough, shortness of breath, asthma-like symptoms |
-| **Digestive** | Abdominal pain, nausea, vomiting, diarrhea |
-| **Infectious / Febrile** | Fever, chills, infectious syndrome |
-| **Neurological** | Headache, dizziness, weakness, altered sensation |
-| **ORL** | Ear, nose and throat symptoms |
-| **Urinary** | Dysuria, urinary frequency, flank pain |
-| **Dermatological** | Rash, skin lesions, itching |
-| **Musculoskeletal** | Joint pain, back pain, trauma-like symptoms |
-| **General** | Fatigue, malaise, nonspecific complaints |
+| Python | Main programming language. |
+| FastAPI | Backend API framework. |
+| Streamlit | Interactive dashboard and user interface. |
+| LangGraph | Multi-agent workflow orchestration. |
+| LangChain | LLM integration and supporting AI abstractions. |
+| OpenAI | LLM and embedding provider. |
+| ChromaDB | Vector database for RAG. |
+| MCP / FastMCP | Tool protocol and medical helper layer. |
+| Pydantic | Data validation and API schemas. |
+| Uvicorn | ASGI server for FastAPI. |
+| ReportLab | PDF generation. |
+| python-dotenv | Environment variable loading. |
 
----
-
-## Folder Structure
+## 13. Project Structure
 
 ```text
 medical-multiagents-project/
-├── backend/
-│   ├── app/
-│   │   ├── api.py                    # FastAPI application and endpoints
-│   │   ├── graph.py                  # LangGraph workflow definition
-│   │   ├── schemas.py                # Pydantic request/response schemas
-│   │   ├── state.py                  # Medical workflow state
-│   │   ├── nodes/
-│   │   │   ├── supervisor.py         # Supervisor agent
-│   │   │   ├── diagnostic_agent.py   # Diagnostic reasoning node
-│   │   │   ├── physician_review.py   # Physician validation node
-│   │   │   └── report_agent.py       # Final report generation node
-│   │   ├── rag/
-│   │   │   ├── index_documents.py    # Medical document indexing
-│   │   │   └── retriever.py          # ChromaDB retrieval logic
-│   │   ├── services/
-│   │   │   ├── clinical_scoring.py   # Severity and clinical scoring
-│   │   │   ├── patient_memory.py     # Patient memory/history
-│   │   │   ├── pdf_export.py         # PDF report generation
-│   │   │   ├── safety.py             # Input validation and safety rules
-│   │   │   ├── monitoring.py         # Monitoring utilities
-│   │   │   ├── performance.py        # Performance helpers
-│   │   │   └── rag_mcp_optimizer.py  # RAG/MCP optimization layer
-│   │   └── tools/
-│   │       ├── mcp_client.py          # MCP client integration
-│   │       ├── care_tools.py          # Medical care helper tools
-│   │       └── patient_tools.py       # Patient context tools
-│   └── mcp_server/
-│       └── server.py                  # MCP server
-├── data/
-│   ├── medical_docs/                  # Medical knowledge base documents
-│   └── chroma_db/                     # ChromaDB persistent vector store
-├── frontend/
-│   └── app.py                         # Streamlit dashboard
-├── langgraph.json                     # LangGraph Studio configuration
-├── main.py                            # Local application entry point
-├── pyproject.toml                     # Project metadata and dependencies
-├── requirements.txt
-└── README.md
+|-- backend/
+|   |-- __init__.py
+|   |-- app/
+|   |   |-- __init__.py
+|   |   |-- api.py                    # FastAPI application and HTTP endpoints
+|   |   |-- graph.py                  # LangGraph workflow definition
+|   |   |-- schemas.py                # Pydantic schemas
+|   |   |-- state.py                  # Medical workflow state
+|   |   |-- nodes/
+|   |   |   |-- __init__.py
+|   |   |   |-- supervisor.py          # Workflow router
+|   |   |   |-- diagnostic_agent.py    # Diagnostic reasoning agent
+|   |   |   |-- physician_review.py    # Physician validation node
+|   |   |   `-- report_agent.py        # Final report generation agent
+|   |   |-- rag/
+|   |   |   |-- __init__.py
+|   |   |   |-- index_documents.py     # Medical document indexing
+|   |   |   |-- retriever.py           # Medical context retrieval
+|   |   |   `-- medical_docs/README.md
+|   |   |-- services/
+|   |   |   |-- __init__.py
+|   |   |   |-- clinical_scoring.py    # Severity and clinical score helpers
+|   |   |   |-- hitl_cache.py          # HITL state support
+|   |   |   |-- monitoring.py          # Monitoring utilities
+|   |   |   |-- patient_memory.py      # Patient history and memory
+|   |   |   |-- pdf_export.py          # PDF report generation
+|   |   |   |-- performance.py         # Performance measurement helpers
+|   |   |   `-- safety.py             # Input validation and safety checks
+|   |   `-- tools/
+|   |       |-- __init__.py
+|   |       |-- care_tools.py          # Care orientation tools
+|   |       |-- mcp_client.py          # MCP client
+|   |       `-- patient_tools.py       # Patient helper tools
+|   `-- mcp_server/
+|       |-- __init__.py
+|       `-- server.py                 # MCP server
+|-- data/
+|   |-- medical_docs/                 # Medical knowledge base
+|   |   |-- README.md
+|   |   |-- cardiaque.md
+|   |   |-- dermatologique.md
+|   |   |-- digestif.md
+|   |   |-- general.md
+|   |   |-- infectieux_febrile.md
+|   |   |-- musculo_articulaire.md
+|   |   |-- neurologique.md
+|   |   |-- orl.md
+|   |   |-- respiratoire.md
+|   |   `-- urinaire.md
+|   `-- chroma_db/                    # Persistent ChromaDB database
+|-- frontend/
+|   `-- app.py                        # Streamlit dashboard
+|-- langgraph.json                    # LangGraph Studio configuration
+|-- main.py                           # Local entry point
+|-- pyproject.toml                    # Project metadata and dependencies
+|-- requirements.txt                  # Optional dependency file
+|-- uv.lock                           # uv lock file
+`-- README.md
 ```
 
----
+## 14. Installation
 
-## Backend Architecture
-
-The backend is built with **FastAPI** and exposes a workflow-first API around LangGraph.
-
-### Core responsibilities
-
-- Create and track consultation sessions
-- Start LangGraph workflows
-- Resume interrupted workflows
-- Return consultation state
-- Return final report
-- Export report as PDF
-- Provide patient history
-- Validate patient input
-- Expose health and integration status
-
-### Backend components
-
-| Component | Description |
-|---|---|
-| `api.py` | HTTP API, workflow orchestration, interrupt/resume handling |
-| `graph.py` | LangGraph nodes, edges and checkpointer |
-| `state.py` | Shared medical state contract |
-| `schemas.py` | Pydantic validation models |
-| `nodes/` | Agent implementations |
-| `services/` | Scoring, safety, memory, monitoring, PDF export |
-| `rag/` | RAG indexing and retrieval |
-| `tools/` | MCP and patient/care tools |
-
----
-
-## Frontend Architecture
-
-The frontend is a **Streamlit clinical dashboard** designed for local academic demonstration.
-
-### Dashboard capabilities
-
-- Start a new consultation session
-- Submit patient symptoms and medical history
-- Display current workflow status
-- Answer patient questions generated by the graph
-- Resume HITL workflow
-- Display clinical timeline
-- Show severity and medical category
-- Display final report
-- Export report as PDF
-- Check backend health
-
-Relevant file:
-
-```text
-frontend/app.py
-```
-
----
-
-## FastAPI Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/health` | Service health, graph status and integration readiness |
-| `POST` | `/sessions/start` | Create a consultation session/thread |
-| `POST` | `/consultation/start` | Start the full LangGraph consultation workflow |
-| `POST` | `/consultation/resume` | Resume a paused HITL workflow |
-| `GET` | `/consultation/{thread_id}` | Get current workflow state |
-| `GET` | `/consultation/{thread_id}/report` | Get final generated report |
-| `POST` | `/chat` | Backward-compatible consultation start |
-| `POST` | `/diagnosis` | Backward-compatible diagnosis endpoint |
-| `POST` | `/resume` | Backward-compatible resume endpoint |
-| `GET` | `/report/{thread_id}` | Backward-compatible report endpoint |
-| `POST` | `/export/pdf` | Export final report as PDF |
-| `GET` | `/history?patient_id=P001` | Get patient history |
-| `GET` | `/patient/{patient_id}` | Get patient profile/history |
-
-### API Example: Health Check
-
-```bash
-curl http://127.0.0.1:8000/health
-```
-
-### API Example: Start Session
-
-```bash
-curl -X POST http://127.0.0.1:8000/sessions/start \
-  -H "Content-Type: application/json" \
-  -d '{
-    "patient_id": "P001",
-    "patient_name": "Patient test"
-  }'
-```
-
-### API Example: Start Consultation
-
-```bash
-curl -X POST http://127.0.0.1:8000/consultation/start \
-  -H "Content-Type: application/json" \
-  -d '{
-    "patient_id": "P001",
-    "patient_name": "Patient test",
-    "session_id": "your-thread-id",
-    "patient_case": "Patient reports fever, sore throat and fatigue for 2 days.",
-    "symptoms": ["fever", "sore throat", "fatigue"],
-    "medical_history": ["No known chronic disease"]
-  }'
-```
-
-### API Example: Resume HITL Consultation
-
-```bash
-curl -X POST http://127.0.0.1:8000/consultation/resume \
-  -H "Content-Type: application/json" \
-  -d '{
-    "thread_id": "your-thread-id",
-    "resume": {
-      "answer": "Temperature is 38.7°C, no breathing difficulty, symptoms started yesterday."
-    }
-  }'
-```
-
-### API Example: Export PDF
-
-```bash
-curl -X POST http://127.0.0.1:8000/export/pdf \
-  -H "Content-Type: application/json" \
-  -o rapport-medical.pdf \
-  -d '{
-    "final_report": "# Preliminary Medical Report\n\nClinical orientation only.",
-    "severity_level": "moderate"
-  }'
-```
-
----
-
-## Installation
-
-### 1. Clone the repository
+### Step 1: Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/medical-multiagents-project.git
 cd medical-multiagents-project
 ```
 
-### 2. Create a virtual environment
+### Step 2: Create a Virtual Environment
 
 ```bash
 python -m venv .venv
 ```
 
-Activate it:
+Activate the environment:
 
 ```bash
 # Windows PowerShell
@@ -428,7 +417,7 @@ Activate it:
 source .venv/bin/activate
 ```
 
-### 3. Install dependencies
+### Step 3: Install Dependencies
 
 Using `uv`:
 
@@ -436,389 +425,273 @@ Using `uv`:
 uv sync
 ```
 
-Or using `pip`:
+Using `pip`:
 
 ```bash
 pip install -e .
 ```
 
-### 4. Configure environment variables
+## 15. Configuration
 
-Create a `.env` file at the project root:
+Create a `.env` file at the project root.
+
+Example:
 
 ```env
 OPENAI_API_KEY=your_openai_api_key
+LANGSMITH_API_KEY=your_langsmith_api_key
 LANGSMITH_TRACING=false
-LANGSMITH_API_KEY=your_langsmith_key_optional
-LANGSMITH_PROJECT=medigraph-ai-clinic
-MEDICAL_SIMULATION_MODE=false
+LANGSMITH_PROJECT=medical-multi-agent-system
+
 FRONTEND_ORIGINS=http://localhost:8501,http://127.0.0.1:8501
 LOG_LEVEL=INFO
+RAG_EMBEDDING_MODE=openai
+MEDICAL_DOCS_DIR=data/medical_docs
+CHROMA_PERSIST_DIR=data/chroma_db
 ```
-
----
-
-## Environment Variables
 
 | Variable | Required | Description |
 |---|---:|---|
-| `OPENAI_API_KEY` | Yes | Required for OpenAI embeddings and LLM-based components. |
-| `LANGSMITH_TRACING` | No | Enable/disable LangSmith tracing. |
-| `LANGSMITH_API_KEY` | No | LangSmith API key if tracing is enabled. |
-| `LANGSMITH_PROJECT` | No | LangSmith project name. |
-| `MEDICAL_SIMULATION_MODE` | No | Enables simplified/simulated execution for demos. |
-| `FRONTEND_ORIGINS` | No | Comma-separated CORS origins for frontend clients. |
-| `LOG_LEVEL` | No | Backend logging level. |
+| `OPENAI_API_KEY` | Yes | Required for OpenAI LLM and embedding features. |
+| `LANGSMITH_API_KEY` | Optional | Required only if LangSmith tracing is enabled. |
+| `LANGSMITH_TRACING` | Optional | Enables or disables LangSmith tracing. |
+| `LANGSMITH_PROJECT` | Optional | LangSmith project name. |
+| `FRONTEND_ORIGINS` | Optional | Allowed frontend origins for CORS. |
+| `LOG_LEVEL` | Optional | Backend logging level. |
+| `RAG_EMBEDDING_MODE` | Optional | Embedding mode for RAG. |
+| `MEDICAL_DOCS_DIR` | Optional | Path to medical Markdown documents. |
+| `CHROMA_PERSIST_DIR` | Optional | Path to ChromaDB persistent storage. |
 
----
+## 16. Running the Application
 
-## Launch Instructions
-
-### Start the FastAPI backend
+### Start the Backend
 
 ```bash
-uvicorn backend.app.api:app --reload --host 127.0.0.1 --port 8000
+uvicorn backend.app.api:app --reload
 ```
 
-API documentation will be available at:
+Backend URL:
+
+```text
+http://127.0.0.1:8000
+```
+
+Swagger documentation:
 
 ```text
 http://127.0.0.1:8000/docs
 ```
 
-### Start the Streamlit dashboard
+### Start the Frontend
 
-Open a second terminal:
+In a second terminal:
 
 ```bash
 streamlit run frontend/app.py
 ```
 
-Dashboard URL:
+Frontend URL:
 
 ```text
 http://localhost:8501
 ```
 
-### Optional: Index RAG medical documents
+### Rebuild the RAG Index
+
+Run this command if the medical documents are changed:
 
 ```bash
 python -m backend.app.rag.index_documents
 ```
 
----
+## 17. User Guide
 
-## LangGraph Studio Usage
+A complete consultation follows these steps:
 
-The repository includes `langgraph.json`:
+1. Launch the FastAPI backend.
+2. Launch the Streamlit frontend.
+3. Open the dashboard in the browser.
+4. Enter patient information.
+5. Enter the main complaint and symptoms.
+6. Add medical history if available.
+7. Start the consultation.
+8. Wait for the Diagnostic Agent to analyze the case.
+9. Answer the contextual medical questions.
+10. Continue the workflow after each HITL interruption.
+11. Review or validate the physician step.
+12. Generate the final report.
+13. Export the report as PDF.
 
-```json
-{
-  "dependencies": ["."],
-  "graphs": {
-    "medical_workflow": "backend.app.graph:graph"
-  }
-}
+Example patient case:
+
+```text
+Patient reports fever, sore throat, fatigue, and headache for two days.
 ```
 
-Start LangGraph Studio locally:
+Possible system behavior:
+
+- Detects an infectious or ENT-oriented clinical category.
+- Asks about temperature, breathing difficulty, pain intensity, and symptom duration.
+- Retrieves relevant medical context from RAG.
+- Requests physician review.
+- Generates a preliminary clinical report.
+
+## 18. API Documentation
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/health` | Checks API status, graph readiness, and integration health. |
+| `POST` | `/sessions/start` | Creates a new consultation session. |
+| `POST` | `/consultation/start` | Starts a LangGraph medical consultation. |
+| `POST` | `/consultation/resume` | Resumes a workflow paused by Human-in-the-Loop. |
+| `GET` | `/consultation/{thread_id}` | Returns the current consultation state. |
+| `GET` | `/consultation/{thread_id}/report` | Returns the final report for a consultation. |
+| `POST` | `/chat` | Backward-compatible consultation endpoint. |
+| `POST` | `/diagnosis` | Backward-compatible diagnostic endpoint. |
+| `POST` | `/resume` | Backward-compatible resume endpoint. |
+| `GET` | `/report/{thread_id}` | Backward-compatible report endpoint. |
+| `POST` | `/export/pdf` | Exports a report as PDF. |
+| `GET` | `/history` | Returns patient history using `patient_id`. |
+| `GET` | `/patient/{patient_id}` | Returns patient profile and history. |
+
+Example request to start a consultation:
 
 ```bash
-langgraph dev
+curl -X POST http://127.0.0.1:8000/consultation/start \
+  -H "Content-Type: application/json" \
+  -d '{
+    "patient_id": "P001",
+    "patient_name": "Test Patient",
+    "patient_case": "Patient reports fever, sore throat and fatigue for two days.",
+    "symptoms": ["fever", "sore throat", "fatigue"],
+    "medical_history": ["No known chronic disease"]
+  }'
 ```
 
-Then open the Studio URL printed in the terminal and select:
+Example request to resume a paused workflow:
 
-```text
-medical_workflow
+```bash
+curl -X POST http://127.0.0.1:8000/consultation/resume \
+  -H "Content-Type: application/json" \
+  -d '{
+    "thread_id": "your-thread-id",
+    "resume": {
+      "answer": "Temperature is 38.5 C. No breathing difficulty."
+    }
+  }'
 ```
 
-LangGraph Studio is useful for:
+## 19. Testing and Validation
 
-- Visualizing graph nodes and transitions
-- Inspecting state between agents
-- Debugging interrupt/resume behavior
-- Testing supervisor routing
-- Reviewing agent outputs step by step
+The system was validated using representative academic scenarios.
 
----
+| Test Case | Input Example | Expected Result |
+|---|---|---|
+| Respiratory case | Cough, fever, shortness of breath | Respiratory category, severity questions, RAG respiratory context. |
+| Cardiac case | Chest pain, palpitations, dyspnea | Cardiac category, red-flag awareness, physician review. |
+| Digestive case | Abdominal pain, nausea, diarrhea | Digestive category, questions about duration, dehydration, pain location. |
+| Benign case | Mild fatigue or minor symptoms | Low severity orientation and monitoring advice. |
 
-## Streamlit Dashboard Usage
+Validation criteria:
 
-1. Start the FastAPI backend.
-2. Start the Streamlit dashboard.
-3. Verify the backend health from the sidebar.
-4. Create or reuse a patient ID.
-5. Enter the patient complaint and optional medical history.
-6. Start the consultation.
-7. Answer generated clinical questions.
-8. Continue the HITL workflow until physician review.
-9. Generate the final preliminary report.
-10. Export the report as PDF.
+- The backend starts successfully.
+- The Streamlit interface communicates with FastAPI.
+- The graph starts a consultation thread.
+- HITL interruptions are returned correctly.
+- `Command(resume=...)` continues the workflow.
+- RAG context is retrieved from local medical documents.
+- A final report is generated.
+- PDF export returns a downloadable document.
 
----
+## 20. Results
 
-## Example Workflow
+The project successfully demonstrates:
 
-```text
-Patient complaint:
-"I have fever, throat pain, headache and fatigue since yesterday."
+- A working medical consultation workflow.
+- A clear separation between frontend, backend, graph, tools, and retrieval layers.
+- Stateful multi-agent orchestration with LangGraph.
+- Human-in-the-Loop validation before finalization.
+- Medical document retrieval using ChromaDB.
+- Structured clinical report generation.
+- PDF export for final consultation output.
+- A reproducible academic prototype suitable for demonstration and extension.
 
-↓
+The system shows that LangGraph is well suited for medical workflow prototyping because it allows explicit state management, controlled routing, and interruption points.
 
-Diagnostic Agent:
-- Extracts symptoms
-- Identifies probable infectious/febrile or ORL category
-- Generates contextual questions
+## 21. Screenshots
 
-↓
-
-HITL:
-- Asks about temperature, duration, breathing difficulty, swallowing pain
-- Waits for patient response
-
-↓
-
-MCP/RAG:
-- Retrieves relevant medical context
-- Checks urgency indicators
-- Adds care orientation
-
-↓
-
-Physician Review:
-- Reviews generated clinical summary
-- Validates or adjusts orientation
-
-↓
-
-Report Agent:
-- Generates structured report
-- Exports PDF
-```
-
----
-
-## Example Consultation
-
-### Input
-
-```json
-{
-  "patient_id": "P001",
-  "patient_name": "Patient test",
-  "patient_case": "I have fever, sore throat and fatigue for 2 days.",
-  "symptoms": ["fever", "sore throat", "fatigue"],
-  "medical_history": ["No known allergies"]
-}
-```
-
-### Possible generated question
-
-```text
-What is your measured temperature, and do you have difficulty breathing or swallowing?
-```
-
-### Possible patient response
-
-```json
-{
-  "answer": "My temperature is 38.5°C. I can swallow, but it is painful. I do not have breathing difficulty."
-}
-```
-
-### Possible preliminary orientation
-
-```text
-Clinical category: ORL / Infectious-Febrile
-Severity level: Low to moderate
-Orientation: Non-emergency medical consultation recommended if symptoms persist, worsen, or red flags appear.
-```
-
----
-
-## Example Report Generation
-
-The final report can include:
-
-- Patient identity/session metadata
-- Initial complaint
-- Extracted symptoms
-- Contextual answers
-- Medical category
-- Clinical score
-- Severity level
-- RAG context summary
-- MCP reasoning summary
-- Physician review
-- Preliminary orientation
-- Safety warnings
-- Recommended next steps
-
-Example report structure:
-
-```markdown
-# Preliminary Medical Orientation Report
-
-## Patient Summary
-Patient reports fever, sore throat and fatigue for 2 days.
-
-## Extracted Symptoms
-- Fever
-- Sore throat
-- Fatigue
-
-## Clinical Category
-ORL / Infectious-Febrile
-
-## Severity Estimation
-Moderate
-
-## Preliminary Orientation
-This report provides orientation clinique préliminaire only.
-
-## Safety Notice
-Seek urgent care if breathing difficulty, chest pain, confusion, severe dehydration,
-neurological deficit, or rapidly worsening symptoms occur.
-```
-
----
-
-## RAG Medical Documents
-
-Medical knowledge files are stored in:
-
-```text
-data/medical_docs/
-```
-
-Current document categories include:
-
-```text
-cardiaque.md
-respiratoire.md
-digestif.md
-infectieux_febrile.md
-neurologique.md
-orl.md
-urinaire.md
-dermatologique.md
-musculo_articulaire.md
-general.md
-```
-
-These files are indexed into ChromaDB and retrieved during the consultation to provide contextual grounding. The retrieval layer is intended to support academic demonstrations of medical RAG, not production clinical decision-making.
-
----
-
-## Screenshots
-
-Add your project screenshots in a future `docs/screenshots/` folder.
+Place screenshots in `docs/screenshots/` and update the paths below.
 
 ### Dashboard Home
 
 ![Dashboard Home](docs/screenshots/dashboard-home.png)
 
-### HITL Consultation
+### Consultation Form
 
-![HITL Consultation](docs/screenshots/hitl-consultation.png)
+![Consultation Form](docs/screenshots/consultation-form.png)
 
-### Clinical Timeline
+### Human-in-the-Loop Question
 
-![Clinical Timeline](docs/screenshots/clinical-timeline.png)
+![Human-in-the-Loop Question](docs/screenshots/hitl-question.png)
 
-### PDF Report
+### Physician Review
 
-![PDF Report](docs/screenshots/pdf-report.png)
+![Physician Review](docs/screenshots/physician-review.png)
 
----
+### Final Report
 
-## Challenges and Improvements
+![Final Report](docs/screenshots/final-report.png)
 
-### Key challenges
+### PDF Export
 
-- Designing a safe Human-in-the-Loop workflow for medical conversations
-- Managing state across multiple agents and interrupt/resume events
-- Generating useful contextual questions without overclaiming diagnosis
-- Combining MCP tool reasoning with RAG retrieval
-- Maintaining patient context and consultation timeline
-- Producing structured reports from partial and evolving clinical information
-- Separating educational clinical orientation from real medical diagnosis
+![PDF Export](docs/screenshots/pdf-export.png)
 
-### Current improvements implemented
+## 22. Limitations
 
-- Workflow state centralization through LangGraph
-- Clear FastAPI session/thread management
-- Patient and physician HITL checkpoints
-- ChromaDB-backed local medical retrieval
-- Clinical scoring and severity estimation services
-- PDF export workflow
-- Streamlit dashboard for academic demonstration
+The current system has several limitations:
 
----
+- It provides preliminary clinical orientation only.
+- It does not replace a doctor or emergency medical service.
+- It is not clinically certified.
+- It does not include production-grade authentication.
+- It does not include a production database such as PostgreSQL.
+- The medical knowledge base is limited to local Markdown files.
+- RAG quality depends on the quality and coverage of the indexed documents.
+- Patient history management is prototype-oriented.
+- Security and privacy controls must be improved before any real deployment.
 
-## Future Improvements
+## 23. Future Improvements
 
-- Add persistent database storage with PostgreSQL or MongoDB
-- Add authentication and role-based access for patient/physician views
-- Add automated test coverage for workflow nodes and API endpoints
-- Add Docker and Docker Compose deployment
-- Add multilingual consultation support
-- Add better medical ontology mapping
-- Add richer red-flag detection rules
-- Add model evaluation and hallucination monitoring
-- Add audit logs for HITL decisions
-- Add structured FHIR-compatible export
-- Add production observability with OpenTelemetry
-- Add secure document upload and retrieval
+Planned improvements include:
 
----
+- PostgreSQL integration for persistent patient and consultation storage.
+- Authentication and role-based access control.
+- Complete patient history management.
+- Cloud deployment with Docker and CI/CD.
+- A richer medical document base for RAG.
+- Automated tests for API endpoints and graph nodes.
+- Better observability with LangSmith and OpenTelemetry.
+- Improved red-flag detection.
+- Multilingual support.
+- Stronger audit logs for Human-in-the-Loop decisions.
+- FHIR-compatible export for medical interoperability.
 
-## Safety Principles
+## 24. Authors
 
-MediGraph AI Clinic follows these academic safety principles:
+Academic project developed at **EMSI** in the field of **Artificial Intelligence and Data Science**.
 
-- Never claim to provide a definitive diagnosis
-- Always frame outputs as preliminary clinical orientation
-- Keep a physician review step in the workflow
-- Preserve Human-in-the-Loop checkpoints
-- Include warning signs and emergency escalation advice
-- Use RAG context as support, not authority
-- Keep educational and academic purpose explicit
+Project theme:
 
----
+```text
+Medical Multi-Agent System with LangGraph
+```
 
-## Authors and Credits
+Main domain:
 
-**Project:** MediGraph AI Clinic – Medical Multi-Agent System with LangGraph  
-**Type:** Academic PFA project  
-**Domain:** AI in healthcare, medical multi-agent systems, RAG, HITL workflows  
-
-Built with:
-
-- [LangGraph](https://www.langchain.com/langgraph)
-- [LangChain](https://www.langchain.com/)
-- [FastAPI](https://fastapi.tiangolo.com/)
-- [Streamlit](https://streamlit.io/)
-- [ChromaDB](https://www.trychroma.com/)
-- [OpenAI](https://openai.com/)
-- [Pydantic](https://docs.pydantic.dev/)
-- [Uvicorn](https://www.uvicorn.org/)
-
----
+```text
+AI in healthcare, multi-agent systems, Human-in-the-Loop workflows, MCP, and RAG.
+```
 
 ## License
 
-This project is provided for academic and educational use.  
-Add your chosen license in a `LICENSE` file, for example:
-
-- MIT License
-- Apache License 2.0
-- Creative Commons for academic distribution
-
----
-
-## Final Note
-
-**MediGraph AI Clinic is a research and academic prototype.**  
-It demonstrates how multi-agent AI, LangGraph, MCP, RAG and HITL workflows can be combined for medical education and preliminary clinical orientation. It is **not** approved, validated, certified, or intended for real-world medical diagnosis or treatment.
+This repository is intended for academic and educational use. Add a `LICENSE` file before public distribution or open-source publication.
