@@ -1,10 +1,10 @@
 ---
 title: "Système Multi-Agent Médical avec LangGraph"
-subtitle: "Rapport de Projet Académique Complet"
+subtitle: "Rapport de Système Multi-Agent Médical avec LangGraph"
 author: "Niema Nassime"
 class: "4IADA G3"
 date: "2026"
-institution: "EMSI - École Multidisciplinaire des Sciences de l'Informatique"
+institution: "EMSI "
 ---
 
 # Rapport de Projet Académique : Système Multi-Agent Médical avec LangGraph
@@ -15,12 +15,8 @@ institution: "EMSI - École Multidisciplinaire des Sciences de l'Informatique"
 |---|---|
 | **Auteur** | Niema Nassime |
 | **Classe / Cohort** | 4IADA G3 |
-| **Institution** | EMSI - École Multidisciplinaire des Sciences de l'Informatique |
-| **Domaine d'Étude** | Intelligence Artificielle et Science des Données |
-| **Période de Réalisation** | 2026 |
-| **Type de Projet** | Projet Académique en Ingénierie Logicielle Appliquée |
-| **Durée Estimée** | 6-8 semaines |
-| **Nombre de Composants** | 24+ modules distincts |
+| **Institution** | EMSI |
+| **Domaine d'Étude** | IA & DATA|
 | **Langage Principal** | Python 3.11+ |
 | **Framework d'Orchestration** | LangGraph (LangChain) |
 
