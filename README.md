@@ -1,11 +1,9 @@
-# Medical Multi-Agent System with LangGraph
----
-title: "Système Multi-Agent Médical avec LangGraph"
-subtitle: "Rapport de Système Multi-Agent Médical avec LangGraph"
+
 author: "Niema Nassime"
 class: "4IADA G3"
-date: "2026"
-institution: "EMSI "
+# Medical Multi-Agent System with LangGraph
+
+
 ---
 
 > Professional project report and technical documentation for a medical multi-agent consultation system using LangGraph, FastAPI, Streamlit, MCP, RAG, and Human-in-the-Loop validation.
